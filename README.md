@@ -1,0 +1,2 @@
+# agency-idol-register
+
