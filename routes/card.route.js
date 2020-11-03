@@ -1,28 +1,49 @@
-const models = require("../models/board.model");
+const models = require("../models/card.model");
+const boardModel = require("../models/board.model");
 const router = require("express").Router();
 const utils = require("../utils/utils");
-router.get("/", async (req, res) => {
+
+const checkPermission = async (boardId, res, userId) => {
+  const board = await boardModel.single(boardId);
+  if (!board) {
+    utils.response(res, 1, "Board not exist");
+    return 1;
+  }
+
+  if (board.owner != userId && !board.public) {
+    utils.response(res, 4, "Permission denied");
+    return 1;
+  }
+  return 0;
+};
+
+router.get("/:boardId", async (req, res) => {
   const userId = req.session.userId;
-  const info = await models.get(userId);
+  const boardId = req.params.boardId;
+  if (await checkPermission(boardId, res, userId)) return;
+  const info = await models.get(boardId);
   res.json({
     code: 0,
-    data: { boards: info },
+    data: { cards: info },
   });
 });
 
-router.post("/", async (req, res) => {
+router.post("/:boardId", async (req, res) => {
   const userId = req.session.userId;
-  const { name } = req.body;
-  if (name)
+  const boardId = req.params.boardId;
+  if (await checkPermission(boardId, res, userId)) return;
+  const { content, type } = req.body;
+  if (content && type)
     models
-      .add(name, userId)
+      .add(content, type, boardId)
       .then((response) => {
         console.log(response);
         res.json({
           code: 0,
           data: {
             id: response.insertId,
-            name: name,
+            content,
+            type,
           },
         });
       })
@@ -31,23 +52,26 @@ router.post("/", async (req, res) => {
         utils.response(res, 1, err.message);
       });
   else {
-    utils.response(res, 2, "Board name could not be empty");
+    utils.response(res, 2, "card name could not be empty");
   }
 });
 
-router.put("/", async (req, res) => {
+router.put("/:boardId", async (req, res) => {
   const userId = req.session.userId;
-  const { name, id } = req.body;
-  if (name && id)
+  const boardId = req.params.boardId;
+  if (await checkPermission(boardId, res, userId)) return;
+  const { id, content, type } = req.body;
+  if (id && content && type)
     models
-      .edit(id, name, userId)
+      .edit(id, content, type, boardId)
       .then((response) => {
         if (response.affectedRows)
           res.json({
             code: 0,
             data: {
               id,
-              name,
+              content,
+              type,
             },
           });
         else throw "Something was wrong";
@@ -61,12 +85,14 @@ router.put("/", async (req, res) => {
   }
 });
 
-router.delete("/", async (req, res) => {
+router.delete("/:boardId", async (req, res) => {
   const userId = req.session.userId;
+  const boardId = req.params.boardId;
+  if (await checkPermission(boardId, res, userId)) return;
   const { id } = req.body;
   if (id)
     models
-      .delete(id, userId)
+      .delete(id, boardId)
       .then((response) => {
         if (response.affectedRows)
           res.json({

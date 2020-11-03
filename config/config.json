@@ -6,5 +6,6 @@
     "user": "vjp5anxV4c",
     "password": "IcPOVHTY20",
     "database": "vjp5anxV4c"
-  }
+  },
+  "salt":10
 }
