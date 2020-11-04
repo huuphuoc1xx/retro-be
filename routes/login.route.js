@@ -16,7 +16,7 @@ router.post("/login", async (req, res) => {
   }
 
   const user = await models.single(username);
-  if (!user) {
+  if (!user||user.length===0) {
     utils.response(res, 1, "Invalid Username!");
     return;
   }
@@ -36,7 +36,7 @@ router.post("/login", async (req, res) => {
   utils.response(res, 2, "Invalid password!");
 });
 
-router.post("/sign-up", async (req, res) => {
+router.post("/signup", async (req, res) => {
   const { username, password } = req.body;
   if (!username) {
     utils.response(res, 1, "Please input Username!");

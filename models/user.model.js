@@ -8,5 +8,12 @@ module.exports = {
         WHERE username=?`,
       [username]
     ),
-add:(username,password)=>db.add("user",{username,password})
+  loadInfo: (userId) =>
+    db.load(
+      `SELECT username,fullname as name,email,dob FROM user WHERE user_id=?`,
+      [userId]
+    ),
+  add: (username, password) => db.add("user", { username, password }),
+  edit: (userid, name, email, dob) =>
+    db.edit("user", { fullname: name, email, dob }, { user_id: userid }),
 };

@@ -1,5 +1,6 @@
 const boardRoute = require("../routes/board.route");
 const cardRoute = require("../routes/card.route");
+const userRoute = require("../routes/user.route");
 const loginRoute = require("../routes/login.route");
 const utils = require("../utils/utils");
 const authMdw = require("./auth.mdw");
@@ -11,4 +12,5 @@ module.exports = (app) => {
   });
   app.use("/board", authMdw, boardRoute);
   app.use("/card", authMdw, cardRoute);
+  app.use("/user", authMdw, userRoute);
 };
