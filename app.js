@@ -1,13 +1,16 @@
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
-const cookieParser = require("cookie-parser");
 
 const session = require("express-session");
+const config = require("./config/config.json");
+
+const MySQLStore = require("express-mysql-session")(session);
 const logger = require("morgan");
 const middlewars = require("./middlewares/middleware");
 require("express-async-errors");
 
+const sessionStore = new MySQLStore(config.mysql);
 const app = express();
 
 app.use(
@@ -19,9 +22,15 @@ app.use(
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
-app.use(session({ secret: "0" }));
+app.use(
+  session({
+    secret: "vGnz",
+    store: sessionStore,
+    resave: false,
+    saveUninitialized: false,
+  })
+);
 middlewars(app);
 app.use((err, req, res, next) => {
   console.log(err);

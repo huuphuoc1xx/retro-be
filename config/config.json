@@ -7,5 +7,6 @@
     "password": "IcPOVHTY20",
     "database": "vjp5anxV4c"
   },
-  "salt":10
+  "salt":10,
+  "secret":"3SMTetK1O2"
 }
