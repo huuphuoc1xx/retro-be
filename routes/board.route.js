@@ -17,7 +17,6 @@ router.post("/", async (req, res) => {
     models
       .add(name, userId)
       .then((response) => {
-        console.log(response);
         res.json({
           code: 0,
           data: {
@@ -57,6 +56,42 @@ router.put("/", async (req, res) => {
         utils.response(res, 1, err.message);
       });
   else {
+    utils.response(res, 2, "Invalid params");
+  }
+});
+
+router.put("/public", async (req,res) => {
+  const userId = req.session.userId;
+  const { id } = req.body;
+  if (id) {
+    const board = await models.single(id);
+    if (!board) {
+      utils.response(res, 1, "Board not exist");
+      return 1;
+    }
+
+    if (board.owner != userId) {
+      utils.response(res, 4, "Permission denied");
+      return 1;
+    }
+
+    models
+      .updateStatus(id, !board.public)
+      .then((response) => {
+        if (response.affectedRows)
+          res.json({
+            code: 0,
+            data: {
+              id,
+            },
+          });
+        else throw "Something was wrong";
+      })
+      .catch((err) => {
+        console.log(err);
+        utils.response(res, 1, err.message);
+      });
+  } else {
     utils.response(res, 2, "Invalid params");
   }
 });

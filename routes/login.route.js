@@ -50,7 +50,6 @@ router.post("/signup", async (req, res) => {
   models
     .add(username, hash)
     .then((response) => {
-      console.log(response);
       res.json({
         code: 0,
         data: {
