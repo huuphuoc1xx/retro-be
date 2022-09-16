@@ -3,9 +3,9 @@
     "connectionLimit": 50,
     "host": "remotemysql.com",
     "port": 3306,
-    "user": "vjp5anxV4c",
-    "password": "IcPOVHTY20",
-    "database": "vjp5anxV4c"
+    "user": "QWO4TgNuOM",
+    "password": "czlJEA0XPW",
+    "database": "QWO4TgNuOM"
   },
   "salt":10,
   "secret":"3SMTetK1O2"
